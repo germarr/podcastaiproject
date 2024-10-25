@@ -6,6 +6,11 @@ from pyannote.audio import Pipeline
 import whisper
 from pyannote.audio.pipelines.utils.hook import ProgressHook
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+diraization_key = os.getenv('hugging_face_diarization')
 
 # Load the Whisper model (you can also try "medium" or "large" models for more accuracy)
 model = whisper.load_model("base")
@@ -40,7 +45,7 @@ def delete_all_in_folder(folder_path):
 def wav_to_diarization(pipeline_path:str=None):
     pipeline = Pipeline.from_pretrained(
         "pyannote/speaker-diarization-3.1",
-        use_auth_token="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")
+        use_auth_token=diraization_key)
 
     with ProgressHook() as hook:
         # diarization = pipeline(pipeline_path, hook=hook, num_speakers=2)
