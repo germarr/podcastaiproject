@@ -2,9 +2,20 @@ from rssParser import getMP3URL
 from getAudioFromMp3 import getAudioFromMp3
 from audioToWav import audio_to_test, convert_mp3_to_wav
 from audioDiarization import wav_to_diarization, diarization_to_csv
+import argparse
 
-the_daily_rss = 'https://feeds.megaphone.fm/profgmarkets'
 
+# Initialize the argument parser
+parser = argparse.ArgumentParser(description="Process some input.")
+
+# Add the --input argument
+parser.add_argument('--input', type=str, required=True, help="The input string to be processed")
+
+# Parse the arguments
+args = parser.parse_args().input
+
+the_daily_rss = args 
+ 
 rss_feed = the_daily_rss
 
 def main():
@@ -21,7 +32,7 @@ def main():
     diarization = wav_to_diarization(pipeline_path=wav_episode_title)
     speakers_df = diarization_to_csv(diar=diarization, pToAudio=wav_episode_title, episodeTitle=episode)
 
-    
+
 
     print(speakers_df)
 

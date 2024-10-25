@@ -53,7 +53,7 @@ This project leverages AI to interact with podcast episodes using a Retrieval-Au
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/germarr/podcastintelligence.git
+   git clone https://github.com/germarr/podcastaiproject.git
    cd project-name
    ```
 
@@ -79,23 +79,8 @@ Once the python libraries are installed on the python environment we can start r
 To start the project, run:
 
 ```bash
-python main.py
-```
-
-### Command Line Arguments (if applicable)
-
-Explain how to run the project with various arguments, if necessary.
-
-```bash
-python main.py --input data.csv --output results.json
-```
-
-### Examples
-
-You can include example commands or usage cases:
-
-```bash
-python main.py example
+cd audioFiles
+python audioInfo.py --input "https://feeds.megaphone.fm/examplepod"
 ```
 
 ## Features
@@ -107,8 +92,8 @@ python main.py example
   - Automated reports generation
 
 ## Configuration
+The file requires a .env file with the keys and endpoints necessary to run the project.
 
-If there are any configuration files (like `.env` or settings), explain how to configure them here.
 
 Example:
 
@@ -119,18 +104,7 @@ Example:
    DATABASE_URL=yourdatabaseurl
    ```
 
-2. **Modify configuration files**:
-   Describe any configuration settings that may need adjustment.
 
-## Contributing
-
-Guidelines for contributing to the project:
-
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature-name`)
-3. Commit your changes (`git commit -m 'Add some feature'`)
-4. Push to the branch (`git push origin feature-name`)
-5. Open a pull request
 
 ## License
 
