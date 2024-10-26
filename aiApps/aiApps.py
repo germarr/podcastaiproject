@@ -9,12 +9,12 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders import TextLoader
 
-oai_auth = ''
-<<<<<<< HEAD
-oai_endpoint = ""
-=======
-oai_endpoint = ''
->>>>>>> 084a1e30389e8fedf2d8da7afd48fc817f1a5231
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+oai_auth = os.getenv('openAI_key')
+oai_endpoint = os.getenv('openAI_endpoint')
 
 llm = AzureChatOpenAI(
     azure_endpoint=oai_endpoint,
@@ -55,7 +55,7 @@ def refine_summary(transcript_path:str=None):
 
     question_prompt = PromptTemplate(
         template=prompt, input_variables=["text"]
-    )Mike
+    )
 
     refine_prompt_template = """
                 Write a concise summary of the following text delimited by triple backquotes.
