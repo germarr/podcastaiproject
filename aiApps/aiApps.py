@@ -10,7 +10,11 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders import TextLoader
 
 oai_auth = ''
+<<<<<<< HEAD
 oai_endpoint = ""
+=======
+oai_endpoint = ''
+>>>>>>> 084a1e30389e8fedf2d8da7afd48fc817f1a5231
 
 llm = AzureChatOpenAI(
     azure_endpoint=oai_endpoint,

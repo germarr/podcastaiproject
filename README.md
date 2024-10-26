@@ -7,6 +7,7 @@ Using the popular RAG (**Retrieval-Augmented Generation**) technique, this proje
 
 ## Table of Contents
 
+<<<<<<< HEAD
 - [Project Context](#project-context)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -15,6 +16,21 @@ Using the popular RAG (**Retrieval-Augmented Generation**) technique, this proje
 - [Contributing](#contributing)
 - [License](#license)
 - [Acknowledgments](#acknowledgments)
+=======
+- [Podcast Intelligence](#podcast-intelligence)
+  - [Table of Contents](#table-of-contents)
+  - [Project Context](#project-context)
+    - [Key Steps in the Process:](#key-steps-in-the-process)
+  - [Installation](#installation)
+    - [Prerequisites](#prerequisites)
+    - [Setup](#setup)
+  - [Usage](#usage)
+    - [Running the Application](#running-the-application)
+  - [Features](#features)
+  - [Configuration](#configuration)
+  - [License](#license)
+  - [Acknowledgments](#acknowledgments)
+>>>>>>> 084a1e30389e8fedf2d8da7afd48fc817f1a5231
 
 
 ## Project Context
@@ -71,7 +87,11 @@ This project leverages AI to interact with podcast episodes using a Retrieval-Au
 
 
 ## Usage
+<<<<<<< HEAD
 Once the python libraries are installed on the python environment we can start running the code. 
+=======
+Once the python libraries are installed in the python environment we can start running the code. 
+>>>>>>> 084a1e30389e8fedf2d8da7afd48fc817f1a5231
 
 
 ### Running the Application
@@ -84,19 +104,33 @@ python audioInfo.py --input "https://feeds.megaphone.fm/examplepod"
 ```
 
 ## Features
+<<<<<<< HEAD
 
 - List the main features of the project
 - Example:
   - Data processing
   - Visualization of results
   - Automated reports generation
+=======
+The project has several libraries that process audio, video, embeddings and some extra things.
+
+- Example:
+  - Get the Audio From an RSS Feed
+  - Get the Audio from a Youtube video.
+  - Turn the audio into Embeddings.
+  - Send the embeddings to a Postgresql database
+>>>>>>> 084a1e30389e8fedf2d8da7afd48fc817f1a5231
 
 ## Configuration
 The file requires a .env file with the keys and endpoints necessary to run the project.
 
+<<<<<<< HEAD
 
 Example:
 
+=======
+Example:
+>>>>>>> 084a1e30389e8fedf2d8da7afd48fc817f1a5231
 1. **Set environment variables**:
    Create a `.env` file in the root directory:
    ```
@@ -104,8 +138,11 @@ Example:
    DATABASE_URL=yourdatabaseurl
    ```
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 084a1e30389e8fedf2d8da7afd48fc817f1a5231
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
