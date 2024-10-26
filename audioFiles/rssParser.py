@@ -20,7 +20,6 @@ def getMP3URL(mp3URL:str=None):
         }
 
 
-
 if __name__ == "__main__":
     getMP3URL(mp3URL='https://feeds.simplecast.com/Sl5CSM3S')
     

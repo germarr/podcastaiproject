@@ -32,6 +32,8 @@ openAI_key_embeddings = os.getenv('openAI_key_embeddings')
 openAI_endpoint_embeddings = os.getenv('openAI_endpoint_embeddings')
 transcriptExample = os.getenv('transcriptExample')
 answersExample = os.getenv('answersExample')
+summaryExample = os.getenv('summaryExample')
+questionsExample = os.getenv('questionsExample')
 
 llm = AzureChatOpenAI(
     azure_endpoint=oai_endpoint,
@@ -71,32 +73,27 @@ def normalize_text(s, sep_token = " \n "):
 def generate_embeddings(text, model="text-embedding-ada-002"): # model = "deployment_name"
     return client.embeddings.create(input = [text], model=model).data[0].embedding
 
-def cosine_similarity(a, b):
-    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
-
-def search_docs(df, user_query, top_n=4, to_print=True):
-    embedding = generate_embeddings(
-        user_query,
-        model="text-embedding-ada-002" # model should be set to the deployment name you chose when you deployed the text-embedding-ada-002 (Version 2) model
-    )
-    df["similarities"] = df.ada_v2.apply(lambda x: cosine_similarity(x, embedding))
-
-    res = (
-        df.sort_values("similarities", ascending=False)
-        .head(top_n)
-    )
-
-    if to_print:
-        print(res)
-
-    return res
-
-def refine_summary(transcript_path:str=None):
+def transcriptToTokens(transcript_path:str=None, pathToCSV:str=None):
 
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=10)
 
     cook = TextLoader(transcript_path, encoding = 'UTF-8').load()
     text = text_splitter.split_documents(cook)
+
+    df_bills = pd.DataFrame({'text':[i.page_content for i in text]})
+    df_bills['text']= df_bills["text"].apply(lambda x : normalize_text(x))
+    tokenizer = tiktoken.get_encoding("cl100k_base")
+    df_bills['n_tokens'] = df_bills["text"].apply(lambda x: len(tokenizer.encode(x)))
+    df_bills = df_bills[df_bills.n_tokens<8192]
+    df_bills['ada_v2'] = df_bills["text"].apply(lambda x : generate_embeddings (x, model = 'text-embedding-ada-002')) # model should be set to the deployment name you chose when you deployed the text-embedding-ada-002 (Version 2) model
+
+    df_bills.to_csv(pathToCSV)
+
+    return df_bills
+
+def refine_summary(transcript_path:str=None, refineTextPath:str=None):
+
+    text = transcriptToTokens(transcript_path=transcript_path)
 
     prompt = """
             Please provide a summary of the following text.
@@ -134,31 +131,21 @@ def refine_summary(transcript_path:str=None):
     answer = result_summary['output_text']
 
     # Open the file in write mode and save the transcription
-    with open(transcript_path, "w", encoding="utf-8") as file:
+    with open(refineTextPath, "w", encoding="utf-8") as file:
         file.write(answer)
 
-    return answer
+    return text
 
-def getTranscriptContent(transcriptp:str=None):
 
-    ll = refine_summary(transcript_path=transcriptp)
-    df_bills = pd.DataFrame({'text':[i.page_content for i in ll]})
-    df_bills['text']= df_bills["text"].apply(lambda x : normalize_text(x))
-    tokenizer = tiktoken.get_encoding("cl100k_base")
-    df_bills['n_tokens'] = df_bills["text"].apply(lambda x: len(tokenizer.encode(x)))
-    df_bills = df_bills[df_bills.n_tokens<8192]
-    df_bills['ada_v2'] = df_bills["text"].apply(lambda x : generate_embeddings (x, model = 'text-embedding-ada-002')) # model should be set to the deployment name you chose when you deployed the text-embedding-ada-002 (Version 2) model
+if __name__ == "__main__":
+    transcriptToTokens(transcript_path=transcriptExample, pathToCSV=answersExample)
 
-    return df_bills
+# res = search_docs(df_bills, "What's the definition of facism?", top_n=4)
 
-df_bills = getTranscriptContent(transcriptp=transcriptExample)
+# allTEXTS = res['text'].to_list() 
+# single_string = " ".join(allTEXTS)
 
-res = search_docs(df_bills, "What factors are the men considering for this election?", top_n=4)
+# with open(answersExample, "w", encoding="utf-8") as file:
+#     file.write(single_string)
 
-allTEXTS = res['text'].to_list() 
-single_string = " ".join(allTEXTS)
-
-with open(answersExample, "w", encoding="utf-8") as file:
-    file.write(single_string)
-
-aah=refine_summary(transcript_path=answersExample)
+# aah=refine_summary(transcript_path=summaryExample, refineTextPath=questionsExample)
