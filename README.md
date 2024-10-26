@@ -6,17 +6,6 @@ Using the popular RAG (**Retrieval-Augmented Generation**) technique, this proje
 
 
 ## Table of Contents
-
-<<<<<<< HEAD
-- [Project Context](#project-context)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Features](#features)
-- [Configuration](#configuration)
-- [Contributing](#contributing)
-- [License](#license)
-- [Acknowledgments](#acknowledgments)
-=======
 - [Podcast Intelligence](#podcast-intelligence)
   - [Table of Contents](#table-of-contents)
   - [Project Context](#project-context)
@@ -29,8 +18,7 @@ Using the popular RAG (**Retrieval-Augmented Generation**) technique, this proje
   - [Features](#features)
   - [Configuration](#configuration)
   - [License](#license)
-  - [Acknowledgments](#acknowledgments)
->>>>>>> 084a1e30389e8fedf2d8da7afd48fc817f1a5231
+  <!-- - [Acknowledgments](#acknowledgments) -->
 
 
 ## Project Context
@@ -61,7 +49,7 @@ This project leverages AI to interact with podcast episodes using a Retrieval-Au
 
 ### Prerequisites
 
-- Python version (e.g., `>= 3.7`)
+- Python version (e.g., `>= 3.10`)
 - ffmpeg library installed in computer. There are a bunch of Youtube videos of how to do this. I followed [this one](https://www.youtube.com/watch?v=JR36oH35Fgg)
 - All the python packages are in the `requirements.txt` file.
 
@@ -85,69 +73,60 @@ This project leverages AI to interact with podcast episodes using a Retrieval-Au
    pip install -r requirements.txt
    ```
 
+4. **Set environment variables**
+
+   The file requires a `.env` file with the keys and endpoints necessary to run the project.
+
+   In the terminal type
+   ```bash
+   touch .env
+   ```
+   Then add the next information:
+   ```
+   openAI_key =<openAIKey>
+   openAI_endpoint=<openAIEndpoint>
+   example_podcastrss = <rssfeedfrompodcast>
+   hugging_face_diarization = <hugginface_diarization_key>
+
+   openAI_key_embeddings = <openAIKey>
+   openAI_endpoint_embeddings =<openAIEndpoint>
+
+
+   transcriptExample = "../transcript/<name_of_file>.txt"
+   summaryExample = "../summary/<name_of_file>.txt"
+   questionsExample = "../questions/<name_of_file>.txt"
+   answersExample = "../answers/<name_of_file>.csv"
+   ```
+   In my case I'm using the openai api avalable in Azure.
 
 ## Usage
-<<<<<<< HEAD
 Once the python libraries are installed on the python environment we can start running the code. 
-=======
-Once the python libraries are installed in the python environment we can start running the code. 
->>>>>>> 084a1e30389e8fedf2d8da7afd48fc817f1a5231
 
 
 ### Running the Application
 
-To start the project, run:
+To start the project, run the next commands in the terminal:
 
 ```bash
-cd audioFiles
+mkdir answers audio diarization questions segments summary transcript wavAudio
+cd scripts
 python audioInfo.py --input "https://feeds.megaphone.fm/examplepod"
 ```
 
+I found that this [site](https://getrssfeed.com/) can help you find the RSS feed from popular podcast using a link from Ap[ple Podcasts.
+
 ## Features
-<<<<<<< HEAD
-
-- List the main features of the project
-- Example:
-  - Data processing
-  - Visualization of results
-  - Automated reports generation
-=======
 The project has several libraries that process audio, video, embeddings and some extra things.
-
 - Example:
   - Get the Audio From an RSS Feed
   - Get the Audio from a Youtube video.
   - Turn the audio into Embeddings.
   - Send the embeddings to a Postgresql database
->>>>>>> 084a1e30389e8fedf2d8da7afd48fc817f1a5231
-
-## Configuration
-The file requires a .env file with the keys and endpoints necessary to run the project.
-
-<<<<<<< HEAD
-
-Example:
-
-=======
-Example:
->>>>>>> 084a1e30389e8fedf2d8da7afd48fc817f1a5231
-1. **Set environment variables**:
-   Create a `.env` file in the root directory:
-   ```
-   API_KEY=yourapikey
-   DATABASE_URL=yourdatabaseurl
-   ```
-
-<<<<<<< HEAD
 
 
-=======
->>>>>>> 084a1e30389e8fedf2d8da7afd48fc817f1a5231
 ## License
-
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
-
+<!-- ## Acknowledgments
 - Any libraries, tools, or resources that helped with the project.
-- People or organizations that inspired the work.
+- People or organizations that inspired the work. -->

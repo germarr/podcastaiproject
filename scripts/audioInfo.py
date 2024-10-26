@@ -32,8 +32,6 @@ def main():
     diarization = wav_to_diarization(pipeline_path=wav_episode_title)
     speakers_df = diarization_to_csv(diar=diarization, pToAudio=wav_episode_title, episodeTitle=episode)
 
-
-
     print(speakers_df)
 
 
