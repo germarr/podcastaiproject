@@ -49,14 +49,14 @@ client = AzureOpenAI(
   azure_endpoint = openAI_endpoint_embeddings
 )
 
-def refine_summary(transcript_path:str=None):
+# def refine_summary(transcript_path:str=None):
 
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=10)
+#     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=10)
 
-    cook = TextLoader(transcript_path, encoding = 'UTF-8').load()
-    text = text_splitter.split_documents(cook)
+#     cook = TextLoader(transcript_path, encoding = 'UTF-8').load()
+#     text = text_splitter.split_documents(cook)
 
-    return text
+#     return text
 
 # s is input text
 def normalize_text(s, sep_token = " \n "):
@@ -75,7 +75,7 @@ def generate_embeddings(text, model="text-embedding-ada-002"): # model = "deploy
 
 def transcriptToTokens(transcript_path:str=None, pathToCSV:str=None):
 
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=10)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=10)
 
     cook = TextLoader(transcript_path, encoding = 'UTF-8').load()
     text = text_splitter.split_documents(cook)
@@ -134,7 +134,7 @@ def refine_summary(transcript_path:str=None, refineTextPath:str=None):
     with open(refineTextPath, "w", encoding="utf-8") as file:
         file.write(answer)
 
-    return text
+    return text,result_summary
 
 
 if __name__ == "__main__":

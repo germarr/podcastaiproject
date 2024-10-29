@@ -1,5 +1,7 @@
 from googleapiclient.discovery import build
 import re
+import pandas as pd
+from globalScripts import clean_filename, create_folder
 
 import os
 from dotenv import load_dotenv
@@ -25,9 +27,13 @@ def getChannelId(videoid:str=None):
     if "items" in response and len(response["items"]) > 0:
         snippet = response["items"][0]["snippet"]
         channel_id = snippet["channelId"]
+        video_title = snippet["title"]
+        channel_name = snippet["channelTitle"]
         
 
-    return channel_id
+    answer_dict = {"channelid":channel_id, "title":video_title,"channelName":channel_name}        
+
+    return answer_dict
 
 def get_uploads_playlist_id(api_key=youtube_key, chid:str=None):
     # Request channel details to get the uploads playlist ID
@@ -116,13 +122,24 @@ def get_video_stats(video_ids):
 
     return video_stats
 
-video_id = get_video_id(url=urlOfVideo)
-channel_id = getChannelId(video_id)
-channel_data = get_uploads_playlist_id(chid = channel_id)
-upload_id = channel_data['uploadId']
+def channelStats(youtubeURL:str=None, pathToSaveCSV:str=None):
 
-vids = get_last_50_video_ids(playlist_id=upload_id)
-vstats = get_video_stats(video_ids=vids)
+    video_id = get_video_id(url=youtubeURL)
+    channel_dict = getChannelId(video_id)
+    video_title = clean_filename(file_name=channel_dict['title'])
+    channel_data = get_uploads_playlist_id(chid = channel_dict['channelid'])
+    upload_id = channel_data['uploadId']
+
+    vids = get_last_50_video_ids(playlist_id=upload_id)
+    vstats = get_video_stats(video_ids=vids)
+    
+    channel_name = clean_filename(file_name=channel_dict['channelName'])
+
+    create_folder(channelData = channel_name, listOfFolders=[pathToSaveCSV])
+    
+    pd.DataFrame(vstats).to_csv(f"{pathToSaveCSV}/{channel_name}/{video_title}.csv")
+
+    return channel_dict, video_id
 
 if __name__ == "__main__":
     getChannelId(vTitle="https://www.youtube.com/watch?v=cW7Qrrkl9hE")

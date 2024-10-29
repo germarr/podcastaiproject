@@ -27,7 +27,7 @@ folder_template = "../transcript/example.txt"
 
 def refine_summary(transcript_path:str=None):
 
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=10)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=10)
 
     cook = TextLoader(transcript_path, encoding = 'UTF-8').load()
     text = text_splitter.split_documents(cook)
@@ -68,10 +68,10 @@ def refine_summary(transcript_path:str=None):
     answer = result_summary['output_text']
 
     # Open the file in write mode and save the transcription
-    with open(folder_template, "w", encoding="utf-8") as file:
-        file.write(answer)
+    # with open(summary_path, "w", encoding="utf-8") as file:
+    #     file.write(answer)
 
-    return answer
+    return answer, result_summary
 
 if __name__ == "__main__":
     refine_summary(transcript_path=folder_template)

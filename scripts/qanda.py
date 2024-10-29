@@ -1,11 +1,13 @@
-from embeddingsToDB import generate_embeddings, answersExample,transcriptExample, questionsExample, llm, transcriptToTokens
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from scripts.embeddingsToDB import generate_embeddings, answersExample,transcriptExample, questionsExample, llm, transcriptToTokens
 import numpy as np
 import pandas as pd
-import os
 import ast
 import argparse
 from sqlmodel import DateTime, Field, SQLModel, create_engine, Session, select
-from backend.todb import toDatabase
+from scripts.backend.todb import toDatabase
 
 # Initialize the argument parser
 parser = argparse.ArgumentParser(description="Process some input.")
@@ -19,7 +21,6 @@ args = parser.parse_args().input
 queryFromUser = args 
 
 questionsExample = os.getenv('questionsExample')
-
 
 def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
