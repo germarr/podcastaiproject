@@ -2,7 +2,7 @@ from pydub import AudioSegment
 import whisper
 
 
-def audio_to_test(audioPath:str=None, textTitle:str=None):
+def audio_to_test(audioPath:str=None, textTitle:str=None, outputTranscript:str=None):
     # Load the Whisper model (you can also try "medium" or "large" models for more accuracy)
     model = whisper.load_model("base")
 
@@ -13,7 +13,10 @@ def audio_to_test(audioPath:str=None, textTitle:str=None):
     transcription = result['text']
 
     # Define the output file path (you can modify this to your desired path)
-    output_file_path = f"../transcript/{textTitle}.txt"
+    if outputTranscript == None:
+        output_file_path = f"../transcript/{textTitle}.txt"
+    else:
+        output_file_path = f"{outputTranscript}"
 
     # Open the file in write mode and save the transcription
     with open(output_file_path, "w", encoding="utf-8") as file:

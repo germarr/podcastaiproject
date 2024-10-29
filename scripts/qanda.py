@@ -4,6 +4,8 @@ import pandas as pd
 import os
 import ast
 import argparse
+from sqlmodel import DateTime, Field, SQLModel, create_engine, Session, select
+from backend.todb import toDatabase
 
 # Initialize the argument parser
 parser = argparse.ArgumentParser(description="Process some input.")
@@ -17,6 +19,7 @@ args = parser.parse_args().input
 queryFromUser = args 
 
 questionsExample = os.getenv('questionsExample')
+
 
 def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
@@ -46,6 +49,8 @@ def search_docs(df, user_query, top_n=4):
         {"role": "system", "content": user_query}
         ]
     )
+
+    toDatabase(questions=user_query, answers=response.content, listOfEmb=embedding)
 
     return {'q':user_query, 'ans':response.content}
 
