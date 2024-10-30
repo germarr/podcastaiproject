@@ -60,7 +60,7 @@ def getRecordingFromYoutubeChannel(ytbURL:str=None):
     path_to_audio_wav = f"../../wavAudio/{baseaudioURL}.wav"
     path_to_audio_transcript = f"../../transcript/{baseaudioURL}.txt"
     path_to_answers = f"../../answers/{baseaudioURL}.csv"
-    path_to_summary = f"../../summary/{baseaudioURL}.txt"
+    path_to_summary = f"../../summary/{baseaudioURL}"
     
     convert_mp3_to_wav(mp3_file=path_to_audio_mp3, wav_file=path_to_audio_wav)
     audio_to_test(audioPath=path_to_audio_mp3, textTitle=videoTitle, outputTranscript=path_to_audio_transcript )
@@ -75,10 +75,10 @@ def getRecordingFromYoutubeChannel(ytbURL:str=None):
         "summary":answer_summary
     }
 
-    sendQToDb(ans_dict=answerAndSummary, file_path=path_to_summary)
+    sendQToDb(ans_dict=answerAndSummary, file_path=f"{path_to_summary}.txt",)
 
     try:
-        with open(path_to_summary,'w',encoding='utf-8') as file:
+        with open(f"{path_to_summary}_full.txt",'w',encoding='utf-8') as file:
             file.write(json.dumps(str(result_summary), indent=4))
     except:
         print(result_summary)
