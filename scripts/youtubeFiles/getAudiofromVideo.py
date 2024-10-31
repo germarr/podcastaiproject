@@ -1,16 +1,8 @@
 import re
 import os
 import yt_dlp
-from videoTitle import channelStats
-from globalScripts import clean_filename, create_folder
 import argparse
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-from scripts.audioToWav import audio_to_test, convert_mp3_to_wav
-from scripts.embeddingsToDB import transcriptToTokens
-from scripts.transcriptToEmbeddings import refine_summary
-from scripts.qanda import sendQToDb
-import json
 
 # Initialize the argument parser
 parser = argparse.ArgumentParser(description="Process some input.")
@@ -18,10 +10,27 @@ parser = argparse.ArgumentParser(description="Process some input.")
 # Add the --input argument
 parser.add_argument('--input', type=str, required=True, help="The input string to be processed")
 
-# Parse the arguments
-args = parser.parse_args().input
+# Add the --type argument
+# parser.add_argument('--isyoutube', type=str, required=True, help="The type of processing to apply")
 
-urlOfTheVideo = args
+# Parse the arguments
+args = parser.parse_args()
+
+# Access the input and type arguments
+urlOfTheVideo = args.input
+# processing_type = args.isyoutube
+
+from videoTitle import channelStats
+from globalScripts import clean_filename, create_folder
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from scripts.audioToWav import audio_to_test, convert_mp3_to_wav
+from scripts.embeddingsToDB import transcriptToTokens
+from scripts.transcriptToEmbeddings import refine_summary
+from embeddingDB.scripts.testingDBs import createSummaryDB,createAssetDB,createTranscriptDB,createEmbeddingDB,EmbeddingTranscript
+from scripts.qanda import sendQToDb
+import json
+
+
 
 def download_video(videoURL:str=None, vTitle:str=None, vFolder:str=None):
 
@@ -63,10 +72,10 @@ def getRecordingFromYoutubeChannel(ytbURL:str=None):
     path_to_summary = f"../../summary/{baseaudioURL}"
     
     convert_mp3_to_wav(mp3_file=path_to_audio_mp3, wav_file=path_to_audio_wav)
-    audio_to_test(audioPath=path_to_audio_mp3, textTitle=videoTitle, outputTranscript=path_to_audio_transcript )
+    transcriptstring = audio_to_test(audioPath=path_to_audio_mp3, textTitle=videoTitle, outputTranscript=path_to_audio_transcript )
 
     ### INSERT SCRIPT TO CALCULATE THE TOTAL PRICE OF ADDING EMBEDDINGS INTO THE DB
-    transcriptToTokens(transcript_path=path_to_audio_transcript, pathToCSV=path_to_answers)
+    dataframe = transcriptToTokens(transcript_path=path_to_audio_transcript, pathToCSV=path_to_answers)
 
     answer_summary, result_summary = refine_summary(transcript_path=path_to_audio_transcript)
 
@@ -83,6 +92,11 @@ def getRecordingFromYoutubeChannel(ytbURL:str=None):
     except:
         print(result_summary)
 
+    createAssetDB(video_id,"youtube",videoTitle,channelName)
+    createTranscriptDB(id_of_asset=video_id, transcriptSTR=transcriptstring)
+    createSummaryDB(id_of_asset=video_id, transcriptsummary=answer_summary)
+    createEmbeddingDB(df_ = dataframe, class_info=EmbeddingTranscript, id_of_asset=video_id)
 
+    
 if __name__ == "__main__":
     getRecordingFromYoutubeChannel(ytbURL = urlOfTheVideo)

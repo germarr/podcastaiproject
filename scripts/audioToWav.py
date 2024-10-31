@@ -23,6 +23,7 @@ def audio_to_test(audioPath:str=None, textTitle:str=None, outputTranscript:str=N
         file.write(transcription)
 
     print(f"Transcription saved to {output_file_path}")
+    return transcription
 
 def convert_mp3_to_wav(mp3_file, wav_file):
     audio = AudioSegment.from_mp3(mp3_file)

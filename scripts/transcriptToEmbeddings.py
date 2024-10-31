@@ -33,7 +33,7 @@ def refine_summary(transcript_path:str=None):
     text = text_splitter.split_documents(cook)
 
     prompt = """
-            Please provide a summary of the following text.
+            Please provide a comprehensive summary of the following text.
                   TEXT: {text}
                   SUMMARY:
                   """
@@ -43,22 +43,31 @@ def refine_summary(transcript_path:str=None):
     )
 
     refine_prompt_template = """
-                Write a concise summary of the following text delimited by triple backquotes.
-                Return your response in bullet points which covers the key points of the text.
-                IF IT SOUNDS LIKE AN ADVERTISMENT RETURN 'AD NO RELEVANT'
+                Write an expansive summary of the following text delimited by triple backquotes.
+                Be detailed and be sure to cover the key points of the text.
                 ```{text}```
-                BULLET POINT SUMMARY:
+                SUMMARY:
                 """
 
     refine_template = PromptTemplate(
         template=refine_prompt_template, input_variables=["text"])
 
+    # # Load refine chain
+    # chain = load_summarize_chain(
+    #     llm=llm,
+    #     chain_type="refine", #refine
+    #     question_prompt=question_prompt,
+    #     refine_prompt=refine_template,
+    #     return_intermediate_steps=True,
+    #     input_key="input_documents",
+    #     output_key="output_text",
+    # )
+
     # Load refine chain
     chain = load_summarize_chain(
         llm=llm,
-        chain_type="refine",
+        chain_type="refine", #refine
         question_prompt=question_prompt,
-        refine_prompt=refine_template,
         return_intermediate_steps=True,
         input_key="input_documents",
         output_key="output_text",
