@@ -2,12 +2,12 @@ from pydub import AudioSegment
 import whisper
 
 
-def audio_to_test(audioPath:str=None, textTitle:str=None, outputTranscript:str=None):
+def audio_to_test(audioPath:str=None, textTitle:str=None, outputTranscript:str=None, lang:str='en'):
     # Load the Whisper model (you can also try "medium" or "large" models for more accuracy)
     model = whisper.load_model("base")
 
     # Transcribe the audio, specifying the language as Spanish ("es")
-    result = model.transcribe(audioPath, language="en")
+    result = model.transcribe(audioPath, language=lang)
 
     # Get the transcription text
     transcription = result['text']

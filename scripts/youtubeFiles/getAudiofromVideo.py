@@ -3,6 +3,7 @@ import os
 import yt_dlp
 import argparse
 import sys
+from tabulate import tabulate
 
 # Initialize the argument parser
 parser = argparse.ArgumentParser(description="Process some input.")
@@ -20,15 +21,16 @@ args = parser.parse_args()
 urlOfTheVideo = args.input
 # processing_type = args.isyoutube
 
-from videoTitle import channelStats
+from videoTitle import channelStats,get_video_stats
 from globalScripts import clean_filename, create_folder
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from scripts.audioToWav import audio_to_test, convert_mp3_to_wav
 from scripts.embeddingsToDB import transcriptToTokens
 from scripts.transcriptToEmbeddings import refine_summary
-from embeddingDB.scripts.testingDBs import createSummaryDB,createAssetDB,createTranscriptDB,createEmbeddingDB,EmbeddingTranscript
+from embeddingDB.scripts.testingDBs import createSummaryDB,createAssetDB,createTranscriptDB,createEmbeddingDB,EmbeddingTranscript,df_to_sqlmodel
 from scripts.qanda import sendQToDb
 import json
+import pandas as pd
 
 
 
@@ -56,7 +58,7 @@ def download_video(videoURL:str=None, vTitle:str=None, vFolder:str=None):
 
 def getRecordingFromYoutubeChannel(ytbURL:str=None):
 
-    youtubeDictionary, video_id = channelStats(youtubeURL=ytbURL, pathToSaveCSV='./videoStats/')
+    youtubeDictionary, video_id,export_df = channelStats(youtubeURL=ytbURL, pathToSaveCSV='./videoStats/')
 
     channelName =  clean_filename(file_name=youtubeDictionary['channelName'])
     videoTitle =  clean_filename(file_name=youtubeDictionary['title'])
@@ -72,10 +74,10 @@ def getRecordingFromYoutubeChannel(ytbURL:str=None):
     path_to_summary = f"../../summary/{baseaudioURL}"
     
     convert_mp3_to_wav(mp3_file=path_to_audio_mp3, wav_file=path_to_audio_wav)
-    transcriptstring = audio_to_test(audioPath=path_to_audio_mp3, textTitle=videoTitle, outputTranscript=path_to_audio_transcript )
+    transcriptstring = audio_to_test(audioPath=path_to_audio_mp3, textTitle=videoTitle, outputTranscript=path_to_audio_transcript,lang='en' )
 
     ### INSERT SCRIPT TO CALCULATE THE TOTAL PRICE OF ADDING EMBEDDINGS INTO THE DB
-    dataframe = transcriptToTokens(transcript_path=path_to_audio_transcript, pathToCSV=path_to_answers)
+    df_bills = transcriptToTokens(transcript_path=path_to_audio_transcript, pathToCSV=path_to_answers)
 
     answer_summary, result_summary = refine_summary(transcript_path=path_to_audio_transcript)
 
@@ -95,7 +97,26 @@ def getRecordingFromYoutubeChannel(ytbURL:str=None):
     createAssetDB(video_id,"youtube",videoTitle,channelName)
     createTranscriptDB(id_of_asset=video_id, transcriptSTR=transcriptstring)
     createSummaryDB(id_of_asset=video_id, transcriptsummary=answer_summary)
-    createEmbeddingDB(df_ = dataframe, class_info=EmbeddingTranscript, id_of_asset=video_id)
+    
+    df_gg  = pd.read_csv(path_to_answers,index_col=0)
+    createEmbeddingDB(df_ = df_gg, class_info=EmbeddingTranscript, id_of_asset=video_id)
+
+    is_video_in_last_fifty = export_df.query(f"video_id == '{video_id}'")['video_id'].count()
+    
+    print("👍 is video in last fifty | ", is_video_in_last_fifty, end=" | ")
+    
+    if is_video_in_last_fifty == 0:
+        single_video_stats = get_video_stats(video_ids = video_id)
+        single_df = pd.DataFrame(single_video_stats)
+        print("HIGHER THAN 0 👌", end=" | ")
+        # print(tabulate(single_df, headers='keys', tablefmt='pretty'))
+        
+        df_to_sqlmodel(df=single_df)
+    
+    print("LET'S PRINT EXPORT DF👌", end=" | ")
+    # print(tabulate(export_df, headers='keys', tablefmt='pretty'))
+    
+    df_to_sqlmodel(df=export_df)
 
     
 if __name__ == "__main__":

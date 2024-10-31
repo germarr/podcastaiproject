@@ -136,10 +136,14 @@ def channelStats(youtubeURL:str=None, pathToSaveCSV:str=None):
     channel_name = clean_filename(file_name=channel_dict['channelName'])
 
     create_folder(channelData = channel_name, listOfFolders=[pathToSaveCSV])
-    
-    pd.DataFrame(vstats).to_csv(f"{pathToSaveCSV}/{channel_name}/{video_title}.csv")
 
-    return channel_dict, video_id
+    export_df = pd.DataFrame(vstats)
+    export_df['publishedAt'] = pd.to_datetime(export_df['publishedAt'])
+    export_df['first_day_of_month'] = export_df['publishedAt'].dt.to_period('M').dt.to_timestamp()
+    
+    export_df.to_csv(f"{pathToSaveCSV}/{channel_name}/channelStats.csv")
+
+    return channel_dict, video_id, export_df
 
 if __name__ == "__main__":
     getChannelId(vTitle="https://www.youtube.com/watch?v=cW7Qrrkl9hE")
