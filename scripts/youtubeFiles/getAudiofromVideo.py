@@ -74,12 +74,41 @@ def getRecordingFromYoutubeChannel(ytbURL:str=None):
     path_to_summary = f"../../summary/{baseaudioURL}"
     
     convert_mp3_to_wav(mp3_file=path_to_audio_mp3, wav_file=path_to_audio_wav)
-    transcriptstring = audio_to_test(audioPath=path_to_audio_mp3, textTitle=videoTitle, outputTranscript=path_to_audio_transcript,lang='en' )
+    
+    language_ = 'es'
+    
+    if language_ == "en":
+        transcriptstring = audio_to_test(audioPath=path_to_audio_mp3, textTitle=videoTitle, outputTranscript=path_to_audio_transcript,lang='en' )
+        pro = """
+            Please provide a comprehensive summary of the following text.
+                  TEXT: {text}
+                  SUMMARY:
+                  """
+        refine_pro_ = """
+                Write an expansive summary of the following text delimited by triple backquotes.
+                Be detailed and be sure to cover the key points of the text.
+                ```{text}```
+                SUMMARY:
+                """
+    else:
+        transcriptstring = audio_to_test(audioPath=path_to_audio_mp3, textTitle=videoTitle, outputTranscript=path_to_audio_transcript,lang='es' )
+        pro = """
+            Escribe un resumen comprensivo del siguiente texto.
+                  TEXTO: {text}
+                  RESUMEN:
+                  """
+    
+        refine_pro_ = """
+                Escribe un resumen expansivo del siguiente texto delimitado por comillas triples. 
+                Sé detallado y asegúrate de cubrir los puntos clave del texto.
+                ```{text}```
+                RESUMEN:
+                """
 
     ### INSERT SCRIPT TO CALCULATE THE TOTAL PRICE OF ADDING EMBEDDINGS INTO THE DB
     df_bills = transcriptToTokens(transcript_path=path_to_audio_transcript, pathToCSV=path_to_answers)
 
-    answer_summary, result_summary = refine_summary(transcript_path=path_to_audio_transcript)
+    answer_summary, result_summary = refine_summary(transcript_path=path_to_audio_transcript,prompt_=pro, refine_prompt_=refine_pro_)
 
     answerAndSummary = {
         "videoId":video_id,

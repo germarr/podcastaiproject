@@ -25,29 +25,29 @@ llm = AzureChatOpenAI(
 
 folder_template = "../transcript/example.txt"
 
-def refine_summary(transcript_path:str=None):
+def refine_summary(transcript_path:str=None, prompt_:str="""
+            Please provide a comprehensive summary of the following text.
+                  TEXT: {text}
+                  SUMMARY:
+                  """, refine_prompt_:str="""
+                Write an expansive summary of the following text delimited by triple backquotes.
+                Be detailed and be sure to cover the key points of the text.
+                ```{text}```
+                SUMMARY:
+                """):
 
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=10)
 
     cook = TextLoader(transcript_path, encoding = 'UTF-8').load()
     text = text_splitter.split_documents(cook)
 
-    prompt = """
-            Please provide a comprehensive summary of the following text.
-                  TEXT: {text}
-                  SUMMARY:
-                  """
+    prompt = prompt_
 
     question_prompt = PromptTemplate(
         template=prompt, input_variables=["text"]
     )
 
-    refine_prompt_template = """
-                Write an expansive summary of the following text delimited by triple backquotes.
-                Be detailed and be sure to cover the key points of the text.
-                ```{text}```
-                SUMMARY:
-                """
+    refine_prompt_template = refine_prompt_
 
     refine_template = PromptTemplate(
         template=refine_prompt_template, input_variables=["text"])
@@ -68,9 +68,11 @@ def refine_summary(transcript_path:str=None):
         llm=llm,
         chain_type="refine", #refine
         question_prompt=question_prompt,
+        refine_prompt=refine_template,
         return_intermediate_steps=True,
         input_key="input_documents",
         output_key="output_text",
+        verbose=True
     )
 
     result_summary = chain({"input_documents": text}, return_only_outputs=False)
