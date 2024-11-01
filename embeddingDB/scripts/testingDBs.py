@@ -7,6 +7,8 @@ from typing import List, Optional
 from pytz import timezone
 from pgvector.sqlalchemy import Vector
 from sqlalchemy import Column
+from sqlalchemy import delete
+from sqlalchemy.types import Text, DateTime
 import datetime
 from openai import AzureOpenAI
 import ast
@@ -44,7 +46,7 @@ class transcriptdb(SQLModel, table=True):
     id: uuid_pkg.UUID = Field(primary_key=True,
                                       default_factory=uuid_pkg.uuid4, index=True)
     id_of_asset:str
-    transcript:str
+    transcript:str = Field(sa_column=Column(Text))
 
 class EmbeddingTranscript(SQLModel, table=True):
     __table_args__ = {"extend_existing": True}
@@ -162,7 +164,20 @@ def df_to_sqlmodel(df: pd.DataFrame, class_i=VideoStats) -> List[SQLModel]:
 
     return objs
 
-
+def delete_channel_entries(channel_id_to_check: str):
+    with Session(engine) as session:
+        # Check if channelId exists
+        exists_query = select(VideoStats).where(VideoStats.channelId == channel_id_to_check)
+        result = session.exec(exists_query).first()
+        
+        # If channelId exists, delete all matching rows
+        if result:
+            delete_query = delete(VideoStats).where(VideoStats.channelId == channel_id_to_check)
+            session.exec(delete_query)
+            session.commit()
+            print(f"All entries with channelId '{channel_id_to_check}' have been deleted.")
+        else:
+            print(f"No entries found with channelId '{channel_id_to_check}'.")
 
 if __name__ == "__main__":
     dataframe = pd.read_csv('C:/Users/Ger M/Desktop/Projects/porfolio/podcastintelligence/scripts/youtubeFiles/videoStats/hasan_minhaj/pete_buttigieg_wants_to_make_america_not_suck_again.csv', index_col=0)

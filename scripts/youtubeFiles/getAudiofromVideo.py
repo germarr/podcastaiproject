@@ -27,7 +27,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..',
 from scripts.audioToWav import audio_to_test, convert_mp3_to_wav
 from scripts.embeddingsToDB import transcriptToTokens
 from scripts.transcriptToEmbeddings import refine_summary
-from embeddingDB.scripts.testingDBs import createSummaryDB,createAssetDB,createTranscriptDB,createEmbeddingDB,EmbeddingTranscript,df_to_sqlmodel
+from embeddingDB.scripts.testingDBs import createSummaryDB,createAssetDB,createTranscriptDB,createEmbeddingDB,EmbeddingTranscript,df_to_sqlmodel,delete_channel_entries
 from scripts.qanda import sendQToDb
 import json
 import pandas as pd
@@ -134,6 +134,8 @@ def getRecordingFromYoutubeChannel(ytbURL:str=None):
     
     print("👍 is video in last fifty | ", is_video_in_last_fifty, end=" | ")
     
+    delete_channel_entries(channel_id_to_check = youtubeDictionary['channelid'])
+
     if is_video_in_last_fifty == 0:
         single_video_stats = get_video_stats(video_ids = video_id)
         single_df = pd.DataFrame(single_video_stats)
