@@ -15,8 +15,8 @@ youtube = build('youtube', 'v3', developerKey=youtube_key)
 urlOfVideo = 'https://www.youtube.com/watch?v=U7_oHUjRFjM'
 
 def get_video_id(url):
-    # Extract video ID from URL
-    video_id = re.search(r"v=([^&]+)", url)
+    # Extract video ID from both regular and shorts URLs
+    video_id = re.search(r"(?:v=|\/shorts\/)([^&\/]+)", url)
     if video_id:
         return video_id.group(1)
     return None

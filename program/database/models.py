@@ -88,3 +88,30 @@ class VideoStats(SQLModel, table=True):
         sa_column=Column(DateTime(timezone=True), default=datetime.datetime.now(
             timezone("America/New_York")))
     )
+
+class SearchVideos(SQLModel, table=True):
+    __table_args__ = {"extend_existing": True}
+    id: uuid_pkg.UUID = Field(primary_key=True,
+                                      default_factory=uuid_pkg.uuid4, index=True)
+    video_id: str
+    publishedAt: Optional[datetime.datetime] = Field(
+        default=None,
+        sa_column=Column(DateTime(timezone=True), default=datetime.datetime.now(
+            timezone("America/New_York")))
+    )
+    channelId: str
+    title: str
+    description: Optional[str] = None
+    thumbnails: Optional[str] = None
+    channelTitle: Optional[str] = None
+    tags: Optional[str] = None  # Using a list of strings for tags
+    categoryId: Optional[int] = None
+    viewCount: Optional[int] = None
+    likeCount: Optional[float] = None
+    favoriteCount: Optional[int] = None
+    commentCount: Optional[int] = None
+    first_day_of_month: Optional[datetime.datetime] = Field(
+        default=None,
+        sa_column=Column(DateTime(timezone=True), default=datetime.datetime.now(
+            timezone("America/New_York")))
+    )

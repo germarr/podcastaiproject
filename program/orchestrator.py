@@ -1,12 +1,13 @@
 import argparse
 import sys
 import os
+import pandas as pd
 
 from youtube.downloadYoutubeVideo import download_video
-from youtube.channelInformation_short import channelStats
+from youtube.channelInformation_short import channelStats,get_video_stats
 from globalScripts import clean_filename, create_folder, convert_mp3_to_wav, audio_to_text,sendQToDb
 from aiGlobalScripts import transcriptToTokens, refine_summary, prompts_for_summary
-from database.dbconnectors import createAssetDB
+from database.dbconnectors import SearchVideos,df_to_sqlmodel,delete_channel_entries,createAssetDB,createTranscriptDB,createSummaryDB,createEmbeddingDB
 
 # Initialize the argument parser
 parser = argparse.ArgumentParser(description="Process some input.")
@@ -79,6 +80,21 @@ if isyoutube == 'youtube':
 
     ### Step 9: Send all the information to Postgres
     createAssetDB(channelID,channelName_clean,videoTitle_clean,video_id,isyoutube,videoTitle,channelName)
+    createTranscriptDB(id_of_asset=video_id, transcriptSTR=transcript_string)
+    createSummaryDB(id_of_asset=video_id, transcriptsummary=answer_summary)
+    
+    df_gg  = pd.read_csv(path_to_answers,index_col=0)
+    createEmbeddingDB(df_ = df_gg, id_of_asset=video_id)
+
+    is_video_in_last_fifty = dataframe_last50_videos\
+        .query(f"video_id == '{video_id}'")['video_id'].count()
+
+    single_video_stats = get_video_stats(video_ids = video_id)
+    single_df = pd.DataFrame(single_video_stats)
+
+    df_to_sqlmodel(df=single_df, class_i=SearchVideos, id_of_asset=video_id)
+    delete_channel_entries(channel_id_to_check = youtubeDictionary['channelid'])
+    df_to_sqlmodel(df=dataframe_last50_videos)
 
 
 
