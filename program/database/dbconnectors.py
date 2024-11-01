@@ -112,11 +112,11 @@ def df_to_sqlmodel(df: pd.DataFrame, class_i=VideoStats, id_of_asset:str=None) -
     
     with Session(engine) as session:
         if id_of_asset != None:
-            exists_query = select(class_i).where(class_i.id_of_asset == id_of_asset)
+            exists_query = select(class_i).where(class_i.video_id == id_of_asset)
             result = session.exec(exists_query).first()
-            
+
             if result:
-                delete_query = delete(class_i).where(class_i.id_of_asset == id_of_asset)
+                delete_query = delete(class_i).where(class_i.video_id == id_of_asset)
                 session.exec(delete_query)
                 session.commit()
             

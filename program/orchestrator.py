@@ -2,6 +2,7 @@ import argparse
 import sys
 import os
 import pandas as pd
+from tabulate import tabulate
 
 from youtube.downloadYoutubeVideo import download_video
 from youtube.channelInformation_short import channelStats,get_video_stats
@@ -89,11 +90,15 @@ if isyoutube == 'youtube':
     is_video_in_last_fifty = dataframe_last50_videos\
         .query(f"video_id == '{video_id}'")['video_id'].count()
 
-    single_video_stats = get_video_stats(video_ids = video_id)
+    single_video_stats = get_video_stats(video_ids = [video_id])
     single_df = pd.DataFrame(single_video_stats)
 
+    print(tabulate(single_df, headers='keys', tablefmt='pretty'))
+
     df_to_sqlmodel(df=single_df, class_i=SearchVideos, id_of_asset=video_id)
+    
     delete_channel_entries(channel_id_to_check = youtubeDictionary['channelid'])
+    
     df_to_sqlmodel(df=dataframe_last50_videos)
 
 
