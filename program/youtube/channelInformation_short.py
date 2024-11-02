@@ -109,18 +109,18 @@ def get_video_stats(video_ids):
 
         video_stats.append({
         'video_id':globalVidData,
-        'publishedAt':individualVidData['publishedAt'],
-        'channelId':individualVidData['channelId'],
+        'publishedat':individualVidData['publishedAt'],
+        'channelid':individualVidData['channelId'],
         'title':individualVidData['title'],
         'description':individualVidData['description'],
         'thumbnails':individualVidData['thumbnails']['default']['url'],
-        'channelTitle':individualVidData['channelTitle'],
+        'channeltitle':individualVidData['channelTitle'],
         'tags':tagg,
-        'categoryId':individualVidData['categoryId'],
-        'viewCount':individualVidDataStats.get('viewCount'),
-        'likeCount':individualVidDataStats.get('likeCount'),
-        'favoriteCount':individualVidDataStats.get('favoriteCount'),
-        'commentCount':individualVidDataStats.get('commentCount')
+        'categoryid':individualVidData['categoryId'],
+        'viewcount':individualVidDataStats.get('viewCount'),
+        'likecount':individualVidDataStats.get('likeCount'),
+        'favoritecount':individualVidDataStats.get('favoriteCount'),
+        'commentcount':individualVidDataStats.get('commentCount')
     })
 
     return video_stats
@@ -141,12 +141,12 @@ def channelStats(youtubeURL:str=None, pathToSaveCSV:str=None):
     create_folder(channelData = channel_name, listOfFolders=[pathToSaveCSV])
 
     export_df = pd.DataFrame(vstats)
-    export_df['publishedAt'] = pd.to_datetime(export_df['publishedAt'])
-    export_df['first_day_of_month'] = export_df['publishedAt'].dt.to_period('M').dt.to_timestamp()
+    export_df['publishedat'] = pd.to_datetime(export_df['publishedat'])
+    export_df['first_day_of_month'] = export_df['publishedat'].dt.to_period('M').dt.to_timestamp()
     
     export_df.to_csv(f"{pathToSaveCSV}/{channel_name}/channelStats.csv")
 
-    return channel_dict, video_id, export_df
+    return channel_dict, video_id, export_df,channel_data
 
 if __name__ == "__main__":
     getChannelId(vTitle="https://www.youtube.com/watch?v=cW7Qrrkl9hE")

@@ -34,23 +34,30 @@ engine = create_engine(CONNECTION_STRING, echo=True)
 
 create_db_and_tables(e=engine)
 
-def createAssetDB(channelid:str=None,channel_of_asset_clean:str=None,title_of_asset_clean:str=None, id_of_asset:str=None, youtube_or_rss:str=None, title_of_asset:str=None, channel_of_asset:str=None):
+def createAssetDB(channelid:str=None,channel_of_asset_clean:str=None,title_of_asset_clean:str=None,id_of_asset:str=None,\
+                     youtube_or_rss:str=None,title_of_asset:str=None,channel_of_asset:str=None,\
+                        channelviews:int=None,channelsubs:int=None,videos_published:int=None,upload_playlist_id:str=None):
     with Session(engine) as session:
-            exists_query = select(assetsdb).where(assetsdb.id_of_asset == id_of_asset)
+            exists_query = select(assetsdb).where(assetsdb.channelid == channelid)
             result = session.exec(exists_query).first()
             
             if result:
-                delete_query = delete(assetsdb).where(assetsdb.id_of_asset == id_of_asset)
+                delete_query = delete(assetsdb).where(assetsdb.channelid == channelid)
                 session.exec(delete_query)
                 session.commit()
 
-            c = assetsdb(channelid=channelid,
-                         channel_of_asset_clean=channel_of_asset_clean,
-                         title_of_asset_clean=title_of_asset_clean,
-                         id_of_asset=id_of_asset,
-                         youtube_or_rss=youtube_or_rss,
-                         title_of_asset=title_of_asset,
-                         channel_of_asset=channel_of_asset)
+            c = assetsdb(channelid= channelid,\
+                        channel_of_asset_clean=channel_of_asset_clean,\
+                        title_of_asset_clean=title_of_asset_clean,\
+                        youtube_or_rss=youtube_or_rss,\
+                        title_of_asset=title_of_asset,\
+                        channel_of_asset = channel_of_asset,\
+                        id_of_asset = id_of_asset,\
+                        channelviews = channelviews,\
+                        channelsubs = channelsubs,\
+                        videos_published = videos_published,\
+                        upload_playlist_id = upload_playlist_id)
+            
             session.add(c)
             session.commit()
 
@@ -128,12 +135,12 @@ def df_to_sqlmodel(df: pd.DataFrame, class_i=VideoStats, id_of_asset:str=None) -
 def delete_channel_entries(channel_id_to_check: str,class_i=VideoStats):
     with Session(engine) as session:
         # Check if channelId exists
-        exists_query = select(class_i).where(class_i.channelId == channel_id_to_check)
+        exists_query = select(class_i).where(class_i.channelid == channel_id_to_check)
         result = session.exec(exists_query).first()
         
         # If channelId exists, delete all matching rows
         if result:
-            delete_query = delete(class_i).where(class_i.channelId == channel_id_to_check)
+            delete_query = delete(class_i).where(class_i.channelid == channel_id_to_check)
             session.exec(delete_query)
             session.commit()
             print(f"All entries with channelId '{channel_id_to_check}' have been deleted.")

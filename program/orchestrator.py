@@ -35,7 +35,7 @@ if isyoutube == 'youtube':
 
     ### Step 1: Using the URL from a youtube video, get all the information from the channel, the video itself and the last 50 videos of the channel.
     #### For reference youtubeDictionary = {"channelid":channel_id, "title":video_title,"channelName":channel_name} 
-    youtubeDictionary, video_id, dataframe_last50_videos = channelStats(youtubeURL=urlOfTheVideo, pathToSaveCSV='./videoStats/')
+    youtubeDictionary, video_id, dataframe_last50_videos,channel_data = channelStats(youtubeURL=urlOfTheVideo, pathToSaveCSV='./videoStats/')
 
     ### Step 2: Get the Name of the Channel in a 'file friendly' format.
     channelName =  youtubeDictionary['channelName']
@@ -80,7 +80,11 @@ if isyoutube == 'youtube':
     sendQToDb(ans_dict=answerAndSummary, file_path=f"{path_to_summary}.txt")
 
     ### Step 9: Send all the information to Postgres
-    createAssetDB(channelID,channelName_clean,videoTitle_clean,video_id,isyoutube,videoTitle,channelName)
+    createAssetDB(channelID,channelName_clean,videoTitle_clean,video_id,\
+                isyoutube,videoTitle,channelName,
+                channel_data['viewCount'],channel_data['subscriberCount'],\
+                channel_data['videoCount'],channel_data['uploadId'])
+    
     createTranscriptDB(id_of_asset=video_id, transcriptSTR=transcript_string)
     createSummaryDB(id_of_asset=video_id, transcriptsummary=answer_summary)
     
@@ -93,7 +97,7 @@ if isyoutube == 'youtube':
     single_video_stats = get_video_stats(video_ids = [video_id])
     single_df = pd.DataFrame(single_video_stats)
 
-    print(tabulate(single_df, headers='keys', tablefmt='pretty'))
+    # print(tabulate(single_df, headers='keys', tablefmt='pretty'))
 
     df_to_sqlmodel(df=single_df, class_i=SearchVideos, id_of_asset=video_id)
     
